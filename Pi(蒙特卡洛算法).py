@@ -1,6 +1,6 @@
 from random import random
 from math import sqrt
-from time import clock
+import time
 def mtkl(DRATS) :
     hits = 0
     for i in range(0,DRATS):
@@ -10,15 +10,8 @@ def mtkl(DRATS) :
             hits = hits+1
     pi = 4*(hits/DRATS)
     return pi 
-time1 = clock()
-pi = mtkl(2**20)
+time1 = time.perf_counter()
+pi = mtkl(2**28)
 print(pi)     
-time2 = clock()
+time2 = time.perf_counter()
 print(time2-time1) 
-'''tl = [2**25,2**25,2**25]
-time1 = clock()
-for i in tl :
-    pi = mtkl(i)
-    print(pi)
-time2 = clock()
-print(time2-time1)'''

@@ -1,7 +1,7 @@
 from multiprocessing import Pool
 from random import random
 from math import sqrt
-from time import clock
+from time import perf_counter
 def mtkl(Drats) :
     hits = 0
     for i in range(0,Drats):
@@ -11,14 +11,14 @@ def mtkl(Drats) :
             hits = hits+1
     return hits
 if __name__ == '__main__':
-    pool = Pool(12)
-    time1 = clock()
+    pl = Pool(8)
+    time1 = perf_counter()
     testlist = [2**27,2**27,2**27,2**27,2**27,2**27,2**27,2**27]
-    hlist = pool.map(mtkl,testlist)       
+    hlist = pl.map(mtkl,testlist)       
     pi = 4*(sum(hlist)/2**30)
-    Pool.close()    
-    Pool.join()
-    time2 = clock()
+    pl.close()    
+    pl.join()
+    time2 = perf_counter()
     print('Sub-process(es) done')
     print('Pi is ',pi)
     print('Time is',time2-time1)
