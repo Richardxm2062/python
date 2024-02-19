@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/Users/richard/opt/anaconda3/bin/python"
+    "python.pythonPath": "/usr/local/bin/python3.9",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic"
 }
