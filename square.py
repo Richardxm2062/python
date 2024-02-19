@@ -5,7 +5,7 @@ Created on Sat Nov  3 01:08:49 2018
 @author: Richa
 """
 
-from turtle import*
+from turtle import *
 x = 200
 
 for i in range(200):
