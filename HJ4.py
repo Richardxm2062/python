@@ -1,17 +1,21 @@
 def main() :
     #拆分题，从8开始拆 %运算是取余计算，//是取商
     St = input()
-    out(St)
+    lt = len(St)
+    out(St,lt)
 
-def out(arr) :
-    length = len(arr)
+def out(arr,length) :
     ls = list(arr)
     pp = []
     #补充0的个数
     zero_num = 8 - length % 8
-    for i in range(zero_num) :
-        #必须要添加字符0而非整数0
-        ls.append("0")      
+    if zero_num == 8:
+        zero_num = 0
+        
+    else :
+        for i in range(zero_num) :
+            #必须要添加字符0而非整数0
+            ls.append("0")      
 
     for j in range(0,len(ls),8) :
         #将列表的部分元素使用"".jion()方法变成一个字符，" "有空格的话将会使每个元素之前有个空格

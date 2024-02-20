@@ -1,8 +1,8 @@
 def main() :
-    while True :                                            #持续循环到全部为true,存在false从头开始
+    while True :                                                #持续循环到全部为true,存在false从头开始
         arr_str = input("请输入一组数组，并用空格分割:")
         arr_str = arr_str.split()                               #将空格输入的字符数组以空格分割返回列表
-        if all(n.isdigit() for n in arr_str) :                  #all函数接受一个可迭代对象，isdigit可以检查字符串是否只包含数字
+        if all(n.isdigit() for n in arr_str) :                  #all函数接受一个可迭代对象，isdigit可以检查字符串是否只包含数字 isalpha()方法检查是否只包含字母
             arr = list(map(int,arr_str))                        #for n in arr 创建了一个迭代器,n代表了迭代器的当前元素
             bubble_sort(arr)
             print(arr)
