@@ -35,12 +35,13 @@ def binary_search(arr,target):
             continue
 
         else :                                     #python的多选控制为if elif else(elif可以有条件 else没有)
-            left = mid + 1 
+            left = mid + 1                          
             continue
-    arr.insert(left,target)                        #insert方法是先索引值后目标值
+    arr.insert(left,target)                        #insert方法是先索引值后目标值,被占用的元素后移
     print("不存在,数组插入为{}".format(arr))          #二分查找法的重点是 left总是指向被插入值的索引点
+                                                   #不理解这一点的话考虑左右指针执行到相邻后续的指针变化
                                                    #python 使用insert方法插入并不返回任何东西print("不存在,数组插入为{}".format(arr.insert(left,target)))是错误写法
 
-
+                                            
 if __name__ == "__main__" :
     main()

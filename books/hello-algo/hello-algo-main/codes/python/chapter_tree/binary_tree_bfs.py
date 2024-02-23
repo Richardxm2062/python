@@ -12,11 +12,11 @@ from modules import TreeNode, list_to_tree, print_tree
 from collections import deque
 
 
-def level_order(root: TreeNode | None) -> list[int]:
+def level_order(root: TreeNode | None) -> list[int]: # type: ignore
     """层序遍历"""
     # 初始化队列，加入根节点
     queue: deque[TreeNode] = deque()
-    queue.append(root)
+    queue.append(root) # type: ignore
     # 初始化一个列表，用于保存遍历序列
     res = []
     while queue:
@@ -33,7 +33,7 @@ def level_order(root: TreeNode | None) -> list[int]:
 if __name__ == "__main__":
     # 初始化二叉树
     # 这里借助了一个从数组直接生成二叉树的函数
-    root: TreeNode = list_to_tree(arr=[1, 2, 3, 4, 5, 6, 7])
+    root: TreeNode = list_to_tree(arr=[1, 2, 3, 4, 5, 6, 7]) # type: ignore
     print("\n初始化二叉树\n")
     print_tree(root)
 
