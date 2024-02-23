@@ -54,7 +54,16 @@ def solve(ct,num,wg,val) :
             else :
                 dp[i][j] = max(dp[i-1][j],dp[i-1][j-wg[i-1]] + val[i-1])        
     
-    print(dp)
+    #最大出现的位置一定会在表格的最右下角(最大背包容量),但并非仅仅在右下角出现
+    #于是我们需要用回溯算法找到正确的物品组合
+    trace(dp,ct,num)
+    
+def trace (dp,ct,num):
+    for i in range(num+1,1,-1) :
+        
+        continue
+
+
 
 
 if __name__ == "__main__" :
