@@ -26,7 +26,6 @@ def main () :
     print("后序深度搜索:",res)
     
 
-
 #前序
 def pre_oder(root:Union[TreeNode,None],res:list[int]) -> list[int] :
     #访问优先级 根节点->左子树->右子树
@@ -52,6 +51,7 @@ def in_oder(root:Union[TreeNode,None],res:list[int]) -> list[int] :
         in_oder(root.right,res)        
         return res
     
+
 #后序
 def post_oder(root:Union[TreeNode,None],res:list[int]) -> list[int] :
     #访问优先级 右子树->根节点->左子树

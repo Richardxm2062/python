@@ -1,6 +1,7 @@
 from typing import Union
 
 class TreeNode :                                       #类声明必须放在main函数前，且被优先加载
+    
     #二叉树类节点
     def __init__(self,val:int) :    
         self.val:int = val                             #节点值

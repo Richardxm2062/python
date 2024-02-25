@@ -12,6 +12,8 @@ a.pop()         #尾删除
 a.popleft()     #左删除
 
 """
+
+
 from collections import deque
 from typing import Union
 from binary_tree import TreeNode,creat_node
@@ -47,8 +49,6 @@ def bft(root : Union[TreeNode,None] ) -> list[int] :
     在这两个判断里很好的体现了广度优先搜索,当为root节点的下一层时
     子节点的下两个子节点都为非空,队列arr会出现两个新节点[2,3],弹出节点2加入子节点4,5
     得到[3,4,5],以次进行弹出仍旧是上一层的节点3。由此进行层遍历
-    
-
     """
 
 if __name__ == "__main__" :
