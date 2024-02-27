@@ -5,7 +5,6 @@
 
 """
 
-from collections import deque
 from binary_tree import TreeNode,creat_node
 from typing import Union
 

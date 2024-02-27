@@ -20,7 +20,7 @@ from binary_tree import TreeNode,creat_node
 def main () :
     n1,n2,n3,n4,n5,n6,n7 = creat_node()
 
-    #bft遍历
+    #bfs遍历
     Node_Val = bfs(n1)
     print(Node_Val)
 
