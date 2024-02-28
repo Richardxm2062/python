@@ -19,7 +19,7 @@ from GraphAdj import GraphAdjList,Vertex
 def bfs(graph:GraphAdjList, start_point:int) :
     res = []                                                    #顶点遍历序列
     start_vertex = graph.vertices[start_point]                  #Vertex起点顶点
-    visited = set[Vertex]([start_vertex])                       #历史顶点set类
+    visited : set[Vertex] = set([start_vertex])                 #历史顶点set类
     que : deque[Vertex] = deque()                               #双端队列
     
     que.append(start_vertex)
@@ -39,12 +39,17 @@ def bfs(graph:GraphAdjList, start_point:int) :
 
 
 def main() :
-    mat_list = [[1,3],[0,2,4],[1,5],[0,4,6],[1,3,5,7],[2,4,8],[3,7],[4,6,8],[5,7]]
-    graph = GraphAdjList(mat_list)
-    res = bfs(graph,0)
-    print(res)
+    mat_list1 = [[1,3],[0,2,4],[1,5],[0,4,6],[1,3,5,7],[2,4,8],[3,7],[4,6,8],[5,7]]
+    graph1 = GraphAdjList(mat_list1)
+    res1 = bfs(graph1,0)
+    print(res1)
     """答案为[0,1,3,2,4,6,5,7,8]"""
 
+    mat_list2 = [[1,3],[0,2],[1,5],[0],[5],[2,4,6],[5]]
+    graph2 = GraphAdjList(mat_list2)
+    res2 = bfs(graph2,0)
+    print(res2)
+    """答案为[0,1,3,2,5,4,6]"""
 
 if __name__ == "__main__" :
     main()
