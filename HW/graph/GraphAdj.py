@@ -79,14 +79,18 @@ class GraphAdjList :
         self.vertices : list[Vertex] = []
         self.adj_list : dict[Vertex, list[Vertex]] = {}
         ls = []
-        for i,edge in enumerate(edges) :
-            self.vertices.append(Vertex(i)) 
-            self.adj_list[self.vertices[i]] = self.val_vex(edge)          #将顶点和边转化为Vertex类并添加到字典
-                                        
+        
+        for i in range(len(edges)) :
+            self.vertices.append(Vertex(i))                               #顶点列表的来源,先完整添加顶点列表
+        
+        for j,edge in enumerate(edges):
+            self.adj_list[self.vertices[j]] = self.val_vex(edge)          #将顶点和边转化为Vertex类并添加到字典
+
+            
 
     def val_vex(self, vals:list[int]) :
         """输入列表[int] 返回列表[Vertex]"""
-        return [ Vertex(ele) for ele in vals ]
+        return [ self.vertices[ele] for ele in vals ]
     
     def vex_val(self, vertices:list[Vertex]) :
         """输入列表[Vertex] 返回列表[int] """

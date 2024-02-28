@@ -19,14 +19,31 @@ from GraphAdj import GraphAdjList,Vertex
 def bfs(graph:GraphAdjList, start_point:int) :
     res = []                                                    #顶点遍历序列
     start_vertex = graph.vertices[start_point]                  #Vertex起点顶点
-    visited = set[Vertex]([start_vertex])
+    visited = set[Vertex]([start_vertex])                       #历史顶点set类
+    que : deque[Vertex] = deque()                               #双端队列
+    
+    que.append(start_vertex)
+    
+    """直到找不到顶点加入队列结束"""
+    while len(que) > 0 :
+        vet = que.popleft()                                     #出队(已在队列中则表明没有访问过可以加入res)
+        res.append(vet)
+        for ele in graph.adj_list[vet] :                        #ele是list[Vertex]
+            if ele in visited :
+                continue
+            
+            else :
+                que.append(ele)                                 #未被访问过 入队
+                visited.add(ele)                                #加入访问过的列表
+    return graph.vex_val(res)
 
 
 def main() :
-    mat_list = [[1,2],[0,3,5],[0,3,4],[1,2,4,5],[2,3],[1,3]]
+    mat_list = [[1,3],[0,2,4],[1,5],[0,4,6],[1,3,5,7],[2,4,8],[3,7],[4,6,8],[5,7]]
     graph = GraphAdjList(mat_list)
-
-
+    res = bfs(graph,0)
+    print(res)
+    """答案为[0,1,3,2,4,6,5,7,8]"""
 
 
 if __name__ == "__main__" :
