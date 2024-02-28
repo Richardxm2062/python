@@ -5,19 +5,18 @@
 """
 
 from collections import deque
-from GraphAdj import GraphAdjMat
+from GraphAdj import GraphAdjList,Vertex
 
 
 """
 使用的是邻接表(矩阵的遍历非常简单)
 """
 
-def bfs(graph:GraphAdjMat, start_vertex:int) :
+def bfs(graph:GraphAdjList, start_vertex:int) :
     res = []        #顶点遍历序列
 
 
 
 def main() :
-    vertices = [0,1,2,3,4,5]
-    adj_mat = [[0,1,1,1,0,0],[1,0,1,0,1,1],[1,0,0,1,1,0],[0,1,1,0,1,1],[0,0,1,1,0,0],[0,1,0,1,0,0]]
-    graph = GraphAdjMat(vertices,adj_mat)
+    mat_list = [[1,2],[0,3,5],[0,3,4],[1,2,4,5],[2,3],[1,3]]
+    graph = GraphAdjList(mat_list)

@@ -43,7 +43,7 @@ def bfs(root:Union[TreeNode,None]) -> list[int] :
         if node.left is not None :                #加入判断的原因,如果node也可为None,则None.left会报错
             arr.append(node.left)                 #左子节点非空,加入arr,while循环继续执行
         if node.right is not None :
-            arr.append(node.right)                #左子节点非空,加入arr,while循环继续执行
+            arr.append(node.right)                #右子节点非空,加入arr,while循环继续执行
     return res
 
     """

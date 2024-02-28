@@ -127,8 +127,7 @@ class GraphAdjList :
         for i in range(len) :
             print(i," -> ",[ j.val for j in self.adj_list[self.vertices[i]]] )
 
-
-if __name__ == "__main__" :
+def main_arr() :
     vertices_arr = [0,1,2,3,4,5]
     mat_arr = [[0,1,1,1,0,0],[1,0,1,0,1,1],[1,0,0,1,1,0],[0,1,1,0,1,1],[0,0,1,1,0,0],[0,1,0,1,0,0]]
     graph_arr = GraphAdjMat(vertices_arr,mat_arr)
@@ -136,7 +135,8 @@ if __name__ == "__main__" :
     graph_arr.add_mat(6)
     graph_arr.del_mat(6)
     graph_arr.pt()
-         
+
+def main_list() :    
     mat_list = [[1,2],[0,3,5],[0,3,4],[1,2,4,5],[2,3],[1,3]]
     print("\n","链表实现")
     graph_list = GraphAdjList(mat_list)
@@ -146,3 +146,9 @@ if __name__ == "__main__" :
     print("\n","再次删除顶点6,和关邻边")
     graph_list.del_edge(6)
     graph_list.pt()
+
+
+
+if __name__ == "__main__" :
+    main_arr()
+    main_list()
