@@ -9,9 +9,6 @@
 """
 
 """使用邻接矩阵 表示图"""
-from multiprocessing import set_forkserver_preload
-from operator import ne
-from re import S
 
 
 class GraphAdjMat :
@@ -38,16 +35,16 @@ class GraphAdjMat :
         self.add_vertex(var)                         
         length = self.size()        
         #添加行     
-        self.adj_mat.append([0]*(length-1))                         #需要先添加行
+        self.adj_mat.append([0]*(length-1))                             #需要先添加行
         #添加列
-        for row in self.adj_mat :                               #在每一行后面加一个元素达到添加列的效果
+        for row in self.adj_mat :                                       #在每一行后面加一个元素达到添加列的效果
             row.append(0)
         
     """删除顶点与邻接矩阵对应的行列"""
     def del_mat(self, index:int) :
         self.vertices.pop(index)
         """删除索引值对应的行与列"""
-        self.adj_mat.pop(index)                                 #删除二维列表的行
+        self.adj_mat.pop(index)                                         #删除二维列表的行
         for row in self.adj_mat :
             row.pop(index)
 
@@ -84,7 +81,7 @@ class GraphAdjList :
         ls = []
         for i,edge in enumerate(edges) :
             self.vertices.append(Vertex(i)) 
-            self.adj_list[self.vertices[i]] = self.val_vex(edge)               #将顶点和边转化为Vertex类并添加到字典
+            self.adj_list[self.vertices[i]] = self.val_vex(edge)          #将顶点和边转化为Vertex类并添加到字典
                                         
 
     def val_vex(self, vals:list[int]) :
@@ -114,11 +111,11 @@ class GraphAdjList :
             self.adj_list[self.vertices[ele]].append(new_vex)          
 
     def del_edge(self, vertex:int) :
-        del_edge = self.adj_list[self.vertices[vertex]]         #顶点值对应的关系列表[2,3,5](Vertex对象)
-        self.adj_list.pop(self.vertices[vertex])                #删除键值对
+        del_edge = self.adj_list[self.vertices[vertex]]                 #顶点值对应的关系列表[2,3,5](Vertex对象)
+        self.adj_list.pop(self.vertices[vertex])                        #删除键值对
         """删除关邻边"""
         for ele in del_edge :           
-            self.adj_list[ele].remove(self.vertices[vertex])    #这里ele元素来自新边转为[Vertex],里面的所有旧顶点必须来自self.vertices
+            self.adj_list[ele].remove(self.vertices[vertex])            #这里ele元素来自新边转为[Vertex],里面的所有旧顶点必须来自self.vertices
         self.vertices.pop(vertex)
 
     def pt(self) :
@@ -152,3 +149,4 @@ def main_list() :
 if __name__ == "__main__" :
     main_arr()
     main_list()
+    
