@@ -39,7 +39,6 @@ def main() :
     """答案为[0,1,2,5,4,3,6,7,8]"""
     
     
-    
     mat_list2 = [[1,3],[0,2],[1,5],[0],[5],[2,4,6],[5]]
     graph2 = GraphAdjList(mat_list2)
     start_vertex2 = graph2.vertices[0]
