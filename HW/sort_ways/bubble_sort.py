@@ -12,7 +12,6 @@ def main() :
             print("输入包含非数字")
             
 
-
 def bubble_sort(arr):
     length = len(arr)
     for i in range(length):                                 #外层循环遍历的总次数为列表的元素个数

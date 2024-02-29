@@ -19,7 +19,6 @@ nsmallest(n, iterable, key=None): 返回可迭代对象中最小的 n 个元素�
 """
 
 import heapq
-from multiprocessing import heap
 
 def main() :
     arr = [3,2,5,7,1,4,8,6,9]
@@ -27,8 +26,6 @@ def main() :
     heapq.heapify(arr) 
     print("堆结构为",arr)           #默认小顶堆,且堆化的结果并不唯一
     print(heapq.nlargest(5,arr))   #以大到小返回最大的5个元素 
-
-
 
 
 if __name__ == "__main__" :
