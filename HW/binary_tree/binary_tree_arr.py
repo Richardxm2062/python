@@ -52,6 +52,7 @@ class TreeNode_arr :
         
         return self.res
     
+    
     def dfs(self, i:int, order:str) :
         self.res = []                                 #初始化
         #空节点直接返回
@@ -93,6 +94,7 @@ class TreeNode_arr :
         self.in_order(self.right(i),arr)
         return self.res
     
+    
     def post_order(self, i:int, arr:list) :
         if self.val(i) is None :
             #return以确保返回到上一递归层不再执行后序添加值代码
@@ -102,6 +104,7 @@ class TreeNode_arr :
         self.post_order(self.right(i),arr)
         self.res.append(self.val(i))
         return self.res
+
 
 #测试
 def main() :
