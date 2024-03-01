@@ -5,7 +5,7 @@
 
 """
 
-from binary_tree import TreeNode,creat_node
+from binary_tree_list import TreeNode,creat_node
 from typing import Union
 
 

@@ -14,7 +14,7 @@ a.popleft()     #左删除
 
 from collections import deque
 from typing import Union
-from binary_tree import TreeNode,creat_node
+from binary_tree_list import TreeNode,creat_node
 
 
 def main () :
