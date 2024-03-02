@@ -16,7 +16,7 @@ II. w[i]<j 即可以选择放入背包
     2.不放入 : dp[i][c] = dp[i-1][c]   
 
     通过以上两种大情况(三种小类)实际得到了 两个dp值,取最大的一个 
-dp[i][j] = max{ dp[i-1][c]  dp[i-1][j-w[i]]  }
+dp[i][j] = max{ dp[i-1][c]  dp[i-1][j-w[i]] }
 (所有的值都为整数)
 eg.
 ct = 5 ; num = 3 ;wg = [1,2,3] ; val = [60,100,120] ;  
@@ -37,10 +37,14 @@ def main() :
         wg.append(lt[0])
         val.append(lt[1])
     
-    solve(ct,num,wg,val)
+    res1 = dynamic_solve(ct,num,wg,val)
+    print("动态规划解:{}".format(max(res1[-1])))
+    
+    res2 = violent_solve(ct,num,wg,val)
+    print("暴力搜索解:{}".format(res2))
 
 
-def solve(ct,num,wg,val) :
+def dynamic_solve(ct,num,wg,val) :
     
     #创建一个初始化的二维列表,表示为前i个物品容量为j的情况下的最大价值
     dp = [[0 for _ in range(ct+1)] for _ in range(num+1)]
@@ -54,15 +58,22 @@ def solve(ct,num,wg,val) :
             else :
                 dp[i][j] = max(dp[i-1][j],dp[i-1][j-wg[i-1]] + val[i-1])        
     
+    return dp
     #最大出现的位置一定会在表格的最右下角(最大背包容量),但并非仅仅在右下角出现
     #于是我们需要用回溯算法找到正确的物品组合
-    trace(dp,ct,num)
     
-def trace (dp,ct,num):
-    for i in range(num+1,1,-1) :
-        
-        continue
-
-
+def violent_solve(ct,num,wg,val):
+    if ct == 0 or num == 0 :
+        return 0
+    if wg[num-1] > ct :
+        return violent_solve(ct,num-1,wg,val)
+    
+    
+    no = violent_solve(ct,num-1,wg,val)
+    yes = violent_solve(ct - wg[num-1],num-1,wg,val) + val[num-1]
+    
+    return max(yes,no)
+    
+    
 if __name__ == "__main__" :
     main()

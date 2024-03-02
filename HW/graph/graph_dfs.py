@@ -13,6 +13,7 @@ def dfs(graph:GraphAdjList, point:Vertex , visited = None, res = None):
     """None是无法赋值给set[Vertex] list[Vertex],因此直接赋值None"""
     if visited is None:
         visited = set[Vertex]()
+    
     if res is None:
         res  = list[Vertex]()
 
