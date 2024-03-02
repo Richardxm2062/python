@@ -32,7 +32,8 @@ def solve(uc, res = [], choice = []) :
 
     for i in reversed(range(len(uc))) :             #未被选择的列表
         choice.append(uc[i])                        #依次添加元素
-        uc = [x for x in uc if x != uc[i]]          #更新未选择列表
+        #剔除掉索引值,保留重复元素
+        uc = [uc[j] for j in range(len(uc)) if j != i]                       
         #uc = deque([x for x in uc if x!= uc[i]])    
         solve(uc,res,choice)                        #开始递归
         """返回层"""
