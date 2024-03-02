@@ -22,6 +22,7 @@ def solve(n, choice:Optional[list[list[int]]] = None, np_list:list[list[int]] = 
         row_pointer = 1
         permutation(n, row_pointer, choice, np_list)   #执行后续行的试探排列
         choice.pop()                                   #回退第一行后清除第一行的填充
+        row_pointer -= 1 
         np_list = permission(n,choice,np_list)
     
     return res 
@@ -49,9 +50,9 @@ def permutation(n:int, row_pointer:int = 1, choice = [], np_list = [], res = [])
             choice.pop()        
             #np_list也需要回溯       
             np_list = permission(n,choice,np_list) 
-              
-        #行指针也要回退
-        row_pointer -= 1                             
+            #行指针也要回退
+            row_pointer -= 1                             
+    
     return res
 
 
