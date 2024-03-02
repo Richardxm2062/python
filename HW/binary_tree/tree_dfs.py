@@ -29,7 +29,8 @@ def pre_oder(root:Union[TreeNode,None], res:list[int] = []) -> list[int] :
     
     else :
         #下面三行的顺序决定了 遍历序
-        res.append(root.val)            #储存当前根节点值,因此优先级最高
+        if root.val is not None :       #append只接受非None 不过不是严重错误
+            res.append(root.val)        #储存当前根节点值,因此优先级最高
         pre_oder(root.left,res)         #递归左子树,优先级为次
         pre_oder(root.right,res)        
         return res
@@ -44,7 +45,8 @@ def in_oder(root:Union[TreeNode,None], res:list[int] = []) -> list[int] :
     else :
         #下面三行的顺序决定了 遍历序
         in_oder(root.left,res)          #优先递归左子树,搜索到左子树的叶节点再回溯,优先级最高
-        res.append(root.val)            #储存当前根节点值,因此优先级为次
+        if root.val is not None :
+            res.append(root.val)            #储存当前根节点值,因此优先级为次
         in_oder(root.right,res)        
         return res
     
@@ -59,7 +61,8 @@ def post_oder(root:Union[TreeNode,None], res:list[int] = []) -> list[int] :
         #下面三行的顺序决定了 遍历序
         post_oder(root.left, res)    
         post_oder(root.right, res)       #优先查找左右子树
-        res.append(root.val)             
+        if root.val is not None :       
+            res.append(root.val)             
     
     return res 
     

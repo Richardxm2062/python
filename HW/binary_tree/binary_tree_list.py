@@ -1,19 +1,20 @@
-from typing import Union
+from typing import Optional
 
-class TreeNode :                                       #类声明必须放在main函数前，且被优先加载
+class TreeNode :                                                #类声明必须放在main函数前，且被优先加载
     
     #二叉树类节点
-    def __init__(self, val:int) :    
-        self.val:int = val                             #节点值
-        self.left : Union[TreeNode,None] = None        #Union[]使得属性可以是指定的类型或者None
-        self.right: Union[TreeNode,None] = None
+    def __init__(self, val:Optional[int] = None , name:Optional[str] = None) :  
+        self.val = val                                          #节点值
+        self.name = name
+        self.left : Optional[TreeNode] = None                   #Union[]使得属性可以是指定的类型或者None
+        self.right : Optional[TreeNode] = None
 
 def creat_node() :
     
-    #初始化二叉树-创建十个节点
-    n1 = TreeNode(val = 1); n2 = TreeNode(val = 2); n3 = TreeNode(val = 3)
-    n4 = TreeNode(val = 4); n5 = TreeNode(val = 5); n6 = TreeNode(val = 6)
-    n7 = TreeNode(val = 7)
+    #初始化二叉树-创建七个节点
+    n1 = TreeNode(1,"1"); n2 = TreeNode(2,"2"); n3 = TreeNode(3,"3")
+    n4 = TreeNode(4,"4"); n5 = TreeNode(5,"5"); n6 = TreeNode(6,"6")
+    n7 = TreeNode(7,"7"); 
 
     #构建指针
     n1.left = n2; n1.right = n3
