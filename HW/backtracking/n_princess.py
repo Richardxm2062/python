@@ -16,25 +16,11 @@ np_list最好使用set 以免重复
 
 from typing import Optional
 
-
-#主体第1行的循环
-def solve(n, choice:Optional[list[list[int]]] = None, np_list:list[list[int]] = [], res = []) :
+def permutation(n:int, row_pointer:int = 0, choice:Optional[list[list[int]]] = None, np_list:list[list[int]] = [], res = []) :
+    """某一层执行试探排列"""
     #初始化
     if choice == None : 
         choice = []
-        
-    for lp in range(n) :
-        choice.append([0,lp])                               #填充当第一行
-        np_list = permission(n,choice,np_list)              #依据当前的选择 添加不允许填充的坐标
-        row_pointer = 1
-        permutation(n, row_pointer, choice, np_list, res)   #执行后续行的试探排列
-        choice.pop()                                        #回退第一行后清除第一行的填充
-        np_list = permission(n,choice,np_list)
-    
-    return res 
-
-def permutation(n:int, row_pointer:int = 1, choice = [], np_list = [], res = []) :
-    """某一层执行试探排列"""
     
     #子树的终止条件
     if row_pointer >= n :
@@ -149,7 +135,7 @@ def main() :
     if n <= 3 : 
         print("无解")
     else :
-        res = solve(n)
+        res = permutation(n)
         view_pt(n,res)
     
 
