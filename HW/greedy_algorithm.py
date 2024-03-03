@@ -6,7 +6,7 @@ n = 6 val = [1,5,10,20,50,100] tar = 131
 答案 chocie = [1,10,20,100] 共计4个硬币
 """
 
-""""""
+"""贪心算法在每次局部决策都做出最优解 但并不能保证是全局最优解"""
 
 #n硬币数量 val硬币面值列表 tar目标金额 choice选择列表
 def greedy_search(n, val, tar, choice = None, level_p = None) : 
