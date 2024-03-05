@@ -32,7 +32,7 @@ def solve(arr : list[str], length:int, dictionary = {'W':0,'A':0,'S':0,'D':0}) :
         
     #初始即为完美
     if  dictionary['W'] == dictionary['A'] == dictionary['S'] == dictionary['D'] != 0  :
-        return 0
+        return []
     
     #需要寻找的字符及其个数
     dictionary = perfect_arr(arr)
