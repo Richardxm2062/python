@@ -11,9 +11,11 @@ def solve(instr, tarstr) :
     left_pointer = 0 
     right_pointer = 1
     res = [['0']]                                           #记录满足条件的最小区间  
-    are = instr[left_pointer:right_pointer]                 #当前指针区间
+    sl = slice(left_pointer,right_pointer)                  #切片操作
+    are = instr[sl]                 #当前指针区间
     while True : 
-        are = instr[left_pointer:right_pointer]
+        sl = slice(left_pointer,right_pointer)              #必须更新
+        are = instr[sl]
         if tarstr[0] in are and tarstr[1] in are :          #当前区间存在字符串tar的字符
             #更新解
             if res[0] == ['0'] :
