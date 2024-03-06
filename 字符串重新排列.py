@@ -19,6 +19,16 @@ My sister is in the house not in the yard
 in in eht eht My is not adry ehosu eirsst
 """
 
+"""可以构建一个keys 和values对应的列表  其中values包含次数和字符长度[c,l] 排序的时候c按大到小进行排序 按小到大排序  """
+""""需要使用到sorted函数的高级用法 sorted(arr,key = lamda x: (-x[0] x[1]))  """
+""" 
+对列表 arr进行排序 使用参数key接受自定义排序 每一行元素传入 lamda函数 -x[0]表示对第0个元素降序(优先) x[1]对第1个元素升序 x[0]表示最后按第0个元素升序
+"""
+
+from difflib import restore
+from turtle import left
+
+
 def permutation(in_list) :
     for i,ele in enumerate(in_list) :
         lst :list[str] = []                          #临时列表
@@ -26,26 +36,32 @@ def permutation(in_list) :
         lst.sort()
         in_list[i] = ''.join(lst)                    #还原为字符串后放回列表
     
+    res = []
     dic = {}
+    #初始化字典
     for ele in in_list :
-        dic[ele] = 0                                 #初始化字典
+        dic[ele] = [ele,0,len(ele)]                      #单词、次数、长度
     
+    #统计次数
     for ele in in_list :
-        dic[ele] += 1                                #统计每个单词出现的次数
+        dic[ele][1] += 1
+    
+    vals = list(dic.values())
+    vals = sorted(vals,key= lambda x: (-x[1],x[2],x[0]))
+    
+    for row in vals :                                   #这里不仅要添加单词本身 还要多次添加重复出现的单词
+        for i in range(row[1]) :
+            res.append(row[0])
         
-    keys = dic.keys()
-    vals = dic.values()
-    vals.sort()
-        
+    res = ' '.join(res)
+         
+    return res
     
     
-    return 0 
-
-
-
 def main() :
     in_list = input().split()
-    permutation(in_list)
+    res = permutation(in_list)
+    print(res)
 
 
 if __name__ == "__main__" :
