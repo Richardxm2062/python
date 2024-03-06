@@ -3,6 +3,7 @@ def main() :
     St = input()
     lt = len(St)
     out(St,lt)
+    
 
 def out(arr,length) :
     ls = list(arr)

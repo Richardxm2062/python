@@ -17,7 +17,6 @@ def main() :
     for j in ls :
         print(j)
     
-        
 
 if __name__ == "__main__" :
     main()
