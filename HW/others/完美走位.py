@@ -44,11 +44,9 @@ def solve(arr : list[str], length:int, dictionary = {'W':0,'A':0,'S':0,'D':0}) :
     left_pointer = 0
     right_pointer = 1                                   #[0:0]的索引将为空
     res = [['0']]                                       #储存串
-    #滑动区间
-    mv_wd = arr[left_pointer:right_pointer]
     
     while True :
-        mv_wd = arr[left_pointer:right_pointer]         #重新构建窗口
+        mv_wd = arr[left_pointer:right_pointer]         #构建滑动窗口
         for ele in mv_wd :
             dictionary2[ele] += 1
         #获取需要字符 字典的键
