@@ -32,6 +32,7 @@ def greedy_solve(m, n, w_list) :
     ct = 0                                                      #计数器
     left_pointer = 0 
     right_pointer = n-1
+    res = []                                                    #储存排列方式
     """(事实上w_list的删除操作直接移动指针就行了)"""
     while True :
         #终止条件:不再有人
@@ -40,7 +41,7 @@ def greedy_solve(m, n, w_list) :
         
         #先判断是否需要单人骑行(仅剩一人也成立)
         if w_list[0] + w_list[-1] > m or len(w_list) == 1 :                           
-            w_list.pop()                                        #删除最重一人
+            res.append([w_list.pop()])                            #删除最重一人
             ct += 1                                             #计数
             #指针重置
             left_pointer = 0
@@ -55,8 +56,7 @@ def greedy_solve(m, n, w_list) :
         if left_pointer == right_pointer :                       
             ct += 1
             #删除最重的两个
-            w_list.pop()
-            w_list.pop()
+            res.append([w_list.pop(),w_list.pop()])
             #指针重置
             left_pointer = 0
             right_pointer = len(w_list) - 1 
@@ -66,14 +66,13 @@ def greedy_solve(m, n, w_list) :
         #贪心结果判断
         if  w_list[left_pointer] + w_list[right_pointer] > m :          
             ct += 1
-            w_list.pop(left_pointer-1)                       #删除指针左边一个
-            w_list.pop()                                     #删除最后一个
+            res.append([w_list.pop(left_pointer-1),w_list.pop()])
             #指针重置
             left_pointer = 0
             right_pointer = len(w_list) - 1    
             continue
         
-    return ct
+    return res
         
         
 def main() :
@@ -81,7 +80,9 @@ def main() :
     w_list =list(map(int,input().split()))                      #重量列表
     w_list.sort()                                               #升序
     res = greedy_solve(m_n[0], m_n[1] ,w_list)
-    print(res)
+    print(f"一共需要{len(res)}辆车,其组合方式为:")
+    for row in res :
+        print(row,end=" ")
 
 if __name__ == "__main__" :
     main()
