@@ -1,4 +1,4 @@
-"""
+"""题目
 instr = "ADFSDFBSDF" 
 tar = 'DB'
 找出存在tar中每个字符的 最小子串

@@ -1,5 +1,4 @@
-"""
-层序遍历 (breath-firt traversal)
+"""层序遍历 (breath-firt traversal)
 
 广度优先遵循逐层推进
 通常借助 队列 deque (先进先出) 来实现。

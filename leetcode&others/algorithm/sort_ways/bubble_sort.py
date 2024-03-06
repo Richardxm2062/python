@@ -1,3 +1,5 @@
+"""冒泡排序
+"""
 def main() :
     while True :                                                #持续循环到全部为true,存在false从头开始
         arr_str = input("请输入一组数组，并用空格分割:")

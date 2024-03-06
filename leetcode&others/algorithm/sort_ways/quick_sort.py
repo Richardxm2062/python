@@ -1,3 +1,5 @@
+"""快速排序
+"""
 def main() :
 
     while True :

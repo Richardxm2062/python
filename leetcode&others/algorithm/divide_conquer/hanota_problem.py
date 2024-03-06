@@ -1,13 +1,9 @@
-"""
-分治问题:
+"""汉诺塔分治问题
 将f(n)问题分解为两个子问题的合并:f(n) = f(n-1) + f(1)
 1. 将n-1个圆盘借助C从A移至B。 
 2. 将剩余1个圆盘从A直接移至C。
 3. 将n-1个圆盘借助A从B移至C。
 """
-
-
-
 
 
 def solve(n:int, src:list[int], buffer:list[int], tar:list[int] ) :

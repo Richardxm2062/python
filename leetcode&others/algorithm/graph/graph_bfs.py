@@ -1,5 +1,4 @@
-"""
-广度优先算法 
+"""图-广度优先算法 
 使用队列deque完成:先进先出
 
 1. 将遍历起始顶点 startVet 加入队列，并开启循环。
@@ -10,7 +9,6 @@
 
 from collections import deque
 from GraphAdj import GraphAdjList,Vertex
-
 
 """
 使用的是邻接表(矩阵的遍历非常简单)
