@@ -33,7 +33,7 @@ def greedy_solve(m, n, w_list) :
     left_pointer = 0 
     right_pointer = n-1
     res = []                                                    #储存排列方式
-    """(事实上w_list的删除操作直接移动指针就行了)"""
+    """(如果不储存结果w_list的删除可以用指针移动代替)"""
     while True :
         #终止条件:不再有人
         if w_list == [] :
