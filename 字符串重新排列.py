@@ -1,4 +1,4 @@
-"""
+"""题目
 处理后输出:
 1、单词内部调整:对每个单词字母重新按字典序排序
 2、单词间顺序调整:
@@ -18,11 +18,11 @@ My sister is in the house not in the yard
 输出:
 in in eht eht My is not adry ehosu eirsst
 """
-
-"""可以构建一个keys 和values对应的列表  其中values包含次数和字符长度[c,l] 排序的时候c按大到小进行排序 按小到大排序  """
-""""需要使用到sorted函数的高级用法 sorted(arr,key = lamda x: (-x[0] x[1]))  """
-""" 
-对列表 arr进行排序 使用参数key接受自定义排序 每一行元素传入 lamda函数 -x[0]表示对第0个元素降序(优先) x[1]对第1个元素升序 x[0]表示最后按第0个元素升序
+"""思路
+字典类型是没法根据值进行排序的 因此考虑列表 [单词,次数,长度] 优先级:次数降序 长度升序 单词音节升序
+需要使用到sorted函数的高级用法 sorted(arr,key = lamda x: (-x[0],x[1],x[0])) 
+对列表 arr进行排序 使用参数key接受自定义排序 每一行元素 [单词,次数,长度] 
+传入 lamda函数 -x[1]表示对第1个元素降序(优先) x[1]对第1个元素升序 x[0]表示最后按第0个元素升序
 """
 
 from difflib import restore
