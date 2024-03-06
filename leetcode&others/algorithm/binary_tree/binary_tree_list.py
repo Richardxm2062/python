@@ -1,3 +1,6 @@
+"""链表二叉树
+"""
+
 from typing import Optional
 
 class TreeNode :                                                #类声明必须放在main函数前，且被优先加载

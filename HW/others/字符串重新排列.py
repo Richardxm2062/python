@@ -1,5 +1,4 @@
 """题目
-
 处理后输出:
 1、单词内部调整:对每个单词字母重新按字典序排序
 2、单词间顺序调整:
@@ -32,10 +31,10 @@ from turtle import left
 
 def permutation(in_list) :
     for i,ele in enumerate(in_list) :
-        lst :list[str] = []                          #临时列表
-        lst = list(ele)                              #每个单词构成的列表并排序
+        lst :list[str] = []                             #临时列表
+        lst = list(ele)                                 #每个单词构成的列表并排序
         lst.sort()
-        in_list[i] = ''.join(lst)                    #还原为字符串后放回列表
+        in_list[i] = ''.join(lst)                       #还原为字符串后放回列表
     
     res = []
     dic = {}
@@ -47,13 +46,16 @@ def permutation(in_list) :
     for ele in in_list :
         dic[ele][1] += 1
     
+    #列表推导式更好
+    vals = [row for row in sorted(list(dic.values()), key = lambda x: (-x[1],x[2],x[0]))]
+    """
     vals = list(dic.values())
     vals = sorted(vals,key= lambda x: (-x[1],x[2],x[0]))
-    
+    """
     for row in vals :                                   #这里不仅要添加单词本身 还要多次添加重复出现的单词
         for i in range(row[1]) :
             res.append(row[0])
-        
+    
     res = ' '.join(res)
          
     return res
