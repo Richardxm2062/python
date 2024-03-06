@@ -32,7 +32,7 @@ def greedy_solve(n, val, tar, choice ,level_p) :
             greedy_solve(n, val, tar, choice,level_p)
             return choice
             
-        #两个终止情况: 1.凑整了 2.凑到tar的值已经比val所有的值小 切不为0
+        #两个终止情况: 1.凑整了 2.凑到tar的值已经比val所有的值小 且不为0
         else:
             if tar < val[0] and tar != 0 :
                 return choice
