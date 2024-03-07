@@ -1,39 +1,48 @@
 """图-链表
 """
 
-from time import sleep
+from typing import Optional
 
 
 class Vertex :
-    def __init__(self, name, value) :
+    def __init__(self, name:Optional[str] , value:Optional[int] = None ) :
         self.name = name
         self.val = value
         
 
 class GraphAdjList :
-    def __init__(self, vex_name, values, mat_list) :    #输入为顶点名字列表 对应值 关系矩阵
+    def __init__(self, vex_name, mat_list, values:Optional[list[int]] = None) :    #输入为顶点名字列表 对应值 关系矩阵
         #顶点列表属性 邻接表
         self.vertices : list[Vertex] = []
-        self.adj_mat = {}
+        self.adj_mat : dict[Vertex,list[Vertex]] = {}
 
         """处理输入"""
         #1.将 vex_name, values 转化为 Vertex对象储存为属性
         self.vertices = self.to_vertex(vex_name, values)
         
-        #2.构造邻接表 将mat_list 每一行从self.vertices找到对应 作为边添加
+        #2.将顶点作为键添加
+        for vex in self.vertices :
+            self.adj_mat[vex] = []
+        
+        #3.构造邻接表 将mat_list 每一行从self.vertices找到对应 作为边添加
+        self.add_edge(mat_list)
+        
+
+    def to_vertex(self , vex_name, values:Optional[list[int]] = None) :
+        if values == None :
+            return [Vertex(vex_name[i]) for i in range(len(vex_name))]
+        
+        else :
+            return [Vertex(vex_name[i], values[i]) for i in range(len(vex_name))]
+        
+
+    def add_edge(self, mat_list) :
         for i,edge in enumerate(mat_list) :
-            self.adj_mat[self.vertices[i]] = self.add_edge(vex_name, edge)
+            for ele in edge :
+                for vex in self.vertices :
+                    if vex.name == ele :
+                        self.adj_mat[self.vertices[i]].append(vex)
         
-
-    def to_vertex(self , vex_name, values) :
-         
-        return [Vertex(vex_name[i], values[i]) for i in range(len(vex_name))]
-        
-
-    def add_edge(self, vex_name, edge) :
-        
-        return [self.vertices[vex_name.index(ele)] for ele in edge]
-    
     
     def del_vertex(self, tar) :
         for vex in self.vertices :
@@ -62,13 +71,11 @@ class GraphAdjList :
             print(keys.name,[ele.name for ele in values ])
             
 
-        
-
 def main() :
     vex_name = ['A','B','C','D','E','F']
     values = [3,5,6,1,2,7,8]
     mat_list = [['B','C'],['A','C','F'],['A','B','D','E'],['C'],['C','F'],['B','E']]
-    graph_list = GraphAdjList(vex_name, values, mat_list)
+    graph_list = GraphAdjList(vex_name,  mat_list, values)
     print("邻接表为=")
     graph_list.pt()
     print("删除顶点\'F\'")
@@ -77,6 +84,7 @@ def main() :
     print("添加顶点\'F\'")
     graph_list.add_vertex('F', 8, ['B','E'])
     graph_list.pt()
+   
 
 
 if __name__ == "__main__" :
