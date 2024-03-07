@@ -2,6 +2,7 @@
 无向图染色,每个节点可为红色(1)或者黑色(0)
 保证所有相邻节点不能同时为红色
 给出所有的方案种数量
+长方形的无向图 答案为 7
 """
 
 from tracemalloc import start
@@ -133,6 +134,7 @@ def main() :
     print("邻接表为=")
     graph_list.pt()
     res = solve(graph_list, '1')
+    #print(res)
     print(len(res))
 
 
