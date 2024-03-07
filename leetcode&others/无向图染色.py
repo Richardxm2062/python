@@ -1,6 +1,10 @@
-"""图-链表
+"""题目
+无向图染色,每个节点可为红色(1)或者黑色(0)
+保证所有相邻节点不能同时为红色
+给出所有的方案种数量
 """
 
+from tracemalloc import start
 from typing import Optional
 
 
@@ -71,19 +75,65 @@ class GraphAdjList :
             print(keys.name,[ele.name for ele in values ])
             
 
+def solve(graph:GraphAdjList, start_point:str):
+    """黑色为0 红色为1"""
+    for vex in graph.vertices :
+        if vex.name == start_point :
+            start_vex = vex                     #找到起点 
+
+    res = backtracing_search(graph, start_vex) 
+    
+    return res
+    
+
+"""找出多个方案需要回溯"""
+def backtracing_search(graph:GraphAdjList, start_vex:Vertex, visited = None, res = []):
+    if visited == None :
+        visited = set[Vertex]()
+    
+    """当前节点"""
+    #1.将当前节点添加到 visited 集合中
+    visited.add(start_vex)  
+    #2.根据限制尝试染色赋值1 or 0 
+    for color in [0,1]:                               #两种颜色都进行循环染色
+        #每次尝试填色都先清空
+        start_vex.val = None            
+        #周围存在红色 则只能染黑色
+        if any( ele.val == 1 for ele in graph.adj_mat[start_vex]) :                         
+            start_vex.val = 0
+        
+        else :
+            start_vex.val = color                        #染色
+        
+        #去过所有节点后 保存未存在过的解
+        if len(visited) == len(graph.vertices) :          
+            _ = [ _.val for _ in graph.vertices]
+            if _ not in res :
+                res.append(_)
+        
+        #继续遍历存在没有去过的节点
+        for vex in graph.adj_mat[start_vex] :           #如果不存在未访问过的节点则不会进入下一层             
+            if vex in visited :
+                continue
+            else :
+                backtracing_search(graph, vex, visited, res)
+        
+        
+    #for循环结束时 即所有填色都尝试过了 返回上个节点时删除本节点信息
+    visited.remove(start_vex)
+    start_vex.val = None
+    
+    return res
+    
+ 
 def main() :
-    vex_name = ['A','B','C','D','E','F']
-    mat_list = [['B','C'],['A','C','F'],['A','B','D','E'],['C'],['C','F'],['B','E']]
+    vex_name = ['1','2','3','4']
+    mat_list = [['2','3'],['1','4'],['1','4'],['2','3']]
     graph_list = GraphAdjList(vex_name,  mat_list, values=None)
     print("邻接表为=")
     graph_list.pt()
-    print("删除顶点\'F\'")
-    graph_list.del_vertex('F')
-    graph_list.pt()
-    print("添加顶点\'F\'")
-    graph_list.add_vertex('F', 8, ['B','E'])
-    graph_list.pt()
-   
+    res = solve(graph_list, '1')
+    print(len(res))
 
 
 if __name__ == "__main__" :
