@@ -9,7 +9,7 @@ from GraphAdj import GraphAdjList, Vertex
 """dfs通常是递归,所以需要传递的参数比bfs更多"""
 """多次输入例子,默认参数只会被使用,因此在函数定义时设置默认参数为可变对象
 （例如空列表 [] 或空集合 set()）时，会导致这个可变对象在多次调用中被共享和修改。"""
-def dfs(graph:GraphAdjList, point:Vertex , visited = None, res = None):
+def dfs(graph:GraphAdjList, start_point:Vertex , visited = None, res = None):
     """None是无法赋值给set[Vertex] list[Vertex],因此直接赋值None"""
     if visited is None:
         visited = set[Vertex]()
@@ -17,10 +17,10 @@ def dfs(graph:GraphAdjList, point:Vertex , visited = None, res = None):
     if res is None:
         res  = list[Vertex]()
 
-    res.append(point)  
-    visited.add(point)                                  #记录访问过的节点
+    res.append(start_point)  
+    visited.add(start_point)                                  #记录访问过的节点
     
-    for adj_vertex in graph.adj_list[point] :
+    for adj_vertex in graph.adj_list[start_point] :
         
         if adj_vertex in visited :
             continue
