@@ -5,18 +5,15 @@
 初始化:
 传入n个顶点,初始化长度为n的顶点列表vertices
 初始化n^2大小的邻接矩阵 adjMat
-
 """
 
-"""使用邻接矩阵 表示图"""
-
-
+"""图-邻接矩阵"""
 class GraphAdjMat :
    
     def __init__(self, vertices:list[int], adj_mat:list[list[int]]):
         """构造方法"""
         #顶点列表:元素代表"顶点值" 索引代表"顶点索引"
-        self.vertices: list[int] = vertices                              #参数与属性同名,但参数的值并不会自动传递给该属性
+        self.vertices: list[int] = vertices                         
         self.adj_mat: list[list[int]] = adj_mat
         
 
@@ -40,6 +37,7 @@ class GraphAdjMat :
         for row in self.adj_mat :                                       #在每一行后面加一个元素达到添加列的效果
             row.append(0)
         
+        
     """删除顶点与邻接矩阵对应的行列"""
     def del_mat(self, index:int) :
         self.vertices.pop(index)
@@ -47,6 +45,7 @@ class GraphAdjMat :
         self.adj_mat.pop(index)                                         #删除二维列表的行
         for row in self.adj_mat :
             row.pop(index)
+
 
     def pt(self) :
         print("邻接矩阵 = ")
@@ -66,14 +65,15 @@ class GraphAdjMat :
 """
 
 """顶点实例化,需要放在前面"""
-"""实力化后顶点将可以有更多属性"""
+"""实例化后顶点将可以有更多属性"""
 """除非是一个引用,否则同等大小的 val:int 转化的Vertex对象依旧是不同一个"""
 class Vertex :
     def __init__(self, val:int) :
         self.val = val
 
 
-"""使用邻接表 表示图"""
+"""图-邻街表
+"""
 class GraphAdjList : 
     def __init__(self, edges:list[list[int]]) : 
         self.vertices : list[Vertex] = []
@@ -86,18 +86,20 @@ class GraphAdjList :
         for j,edge in enumerate(edges):
             self.adj_list[self.vertices[j]] = self.val_vex(edge)          #将顶点和边转化为Vertex类并添加到字典
 
-            
 
     def val_vex(self, vals:list[int]) :
         """输入列表[int] 返回列表[Vertex]"""
         return [ self.vertices[ele] for ele in vals ]
     
+    
     def vex_val(self, vertices:list[Vertex]) :
         """输入列表[Vertex] 返回列表[int] """
         return [ ele.val for ele in vertices ] 
     
+    
     def size(self) :
         return len(self.vertices)
+        
         
     """输入顶点和边"""
     def add_edge(self, vertex:int, edge :list[int]) :
@@ -112,7 +114,8 @@ class GraphAdjList :
         
         """在其他边添加新顶点"""
         for ele in edge :
-            self.adj_list[self.vertices[ele]].append(new_vex)          
+            self.adj_list[self.vertices[ele]].append(new_vex)      
+                
 
     def del_edge(self, vertex:int) :
         del_edge = self.adj_list[self.vertices[vertex]]                 #顶点值对应的关系列表[2,3,5](Vertex对象)
@@ -121,12 +124,14 @@ class GraphAdjList :
         for ele in del_edge :           
             self.adj_list[ele].remove(self.vertices[vertex])            #这里ele元素来自新边转为[Vertex],里面的所有旧顶点必须来自self.vertices
         self.vertices.pop(vertex)
+        
 
     def pt(self) :
         print(" 邻接表 =")
         len = self.size()
         for i in range(len) :
-            print(i," -> ",[ j.val for j in self.adj_list[self.vertices[i]]] )
+            print(i," -> ",[ j.val for j in self.adj_list[self.vertices[i]]])
+            
 
 def main_arr() :
     vertices_arr = [0,1,2,3,4,5]
@@ -136,6 +141,7 @@ def main_arr() :
     graph_arr.add_mat(6)
     graph_arr.del_mat(6)
     graph_arr.pt()
+    
 
 def main_list() :    
     mat_list = [[1,2],[0,3,5],[0,3,4],[1,2,4,5],[2,3],[1,3]]
@@ -147,7 +153,6 @@ def main_list() :
     print("\n","再次删除顶点6,和关邻边")
     graph_list.del_edge(6)
     graph_list.pt()
-
 
 
 if __name__ == "__main__" :
