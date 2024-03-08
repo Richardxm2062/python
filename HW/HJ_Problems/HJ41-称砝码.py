@@ -51,6 +51,7 @@ def solve(val, num, res = {0}, ls=[]) :
     for i,j in enumerate(num) :
         for c in range(j) :
             ls.append(val[i])
+    
     #这样则不需要多次深层递归 嵌套循环即可
     """res 作为不重复的历史总重 并不断向上面添加砝码"""
     for i in ls :

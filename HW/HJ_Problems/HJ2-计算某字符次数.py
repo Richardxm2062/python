@@ -1,8 +1,6 @@
 def main() :
-    strings = input()
-    strings = strings.split()
+    strings = input().split()
     target = input()
-    str_ls = []
     num = 0
     for word in strings :
         for sg in list(word):

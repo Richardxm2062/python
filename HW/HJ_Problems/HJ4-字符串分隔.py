@@ -10,7 +10,7 @@ def out(arr,length) :
     pp = []
     #补充0的个数
     zero_num = 8 - length % 8
-    if zero_num == 8:
+    if zero_num == 8:           #余数为0,则不添加0
         zero_num = 0
         
     else :

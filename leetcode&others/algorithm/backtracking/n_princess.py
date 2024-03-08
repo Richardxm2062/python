@@ -1,4 +1,4 @@
-"""
+"""题目
 n x n大小的棋盘上放置 n 个皇后
 皇后可以攻击同列、同行、正反对角线上的其他皇后
 试问 n 个皇后互相不能攻击 的排列有多少种
@@ -24,7 +24,7 @@ def permutation(n:int, row_pointer:int = 0, choice:Optional[list[list[int]]] = N
     
     #子树的终止条件
     if row_pointer >= n :
-        #选择了4个坐标则为一种方案
+        #只有在选择了4个坐标 才视为一种方案
         if len(choice) == n :           
             res.append(choice.copy())
         return res
@@ -35,10 +35,12 @@ def permutation(n:int, row_pointer:int = 0, choice:Optional[list[list[int]]] = N
             #填充并更新Np_list
             choice.append([row_pointer,lp])
             np_list = permission(n,choice,np_list) 
+            
             #递归到下一层
             row_pointer += 1
             permutation(n, row_pointer, choice, np_list, res) 
-            #删除元素开始回溯
+           
+            #回溯层:选择列表 拒绝列表 行指针都需要回溯
             choice.pop()        
             #np_list也需要回溯       
             np_list = permission(n,choice,np_list) 

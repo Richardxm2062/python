@@ -5,7 +5,6 @@
 长方形的无向图 答案为 7
 """
 
-from tracemalloc import start
 from typing import Optional
 
 

@@ -1,4 +1,6 @@
-#查找节点值为7的所有节点,并输出找到每个7的路径,并要求路径中不包含节点"3"
+"""题目
+查找节点值为7的所有节点,并输出找到每个7的路径,并要求路径中不包含节点"3"
+"""
 
 import sys
 from pathlib import Path
@@ -6,7 +8,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from binary_tree import binary_tree_list
-from typing import Any, Optional
+from typing import Optional
 
 def dfs (root:Optional[binary_tree_list.TreeNode],  path:list[Optional[str]], res:list[list[Optional[str]]], val:int) :
     """现将当前节点加入path"""
@@ -20,7 +22,7 @@ def dfs (root:Optional[binary_tree_list.TreeNode],  path:list[Optional[str]], re
         if root.name != '3' :
             path.append(root.name)
             if root.val == val :
-                res.append(list(path))                      #这里必须保存path列表的副本，可以使用copy()
+                res.append(list(path))                  #这里必须保存path列表的副本，可以使用copy()
         else :
             return
             
