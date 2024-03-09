@@ -24,8 +24,10 @@ def solve(n, row, col) :
     out_list = [_ for _ in range(1,n+1)]        #原始个数[1,n]
     out_list = list(map(str, out_list))         #转化为字符串类型
     
-    #构建输出矩阵 m*n大小 初始元素为 "0"
+    #构建输出矩阵 m*n大小 初始元素为 "*"
     out_mat = [['*' for _ in range(col)] for _ in range(row)]
+    
+    #按坐标进行填充 
     x_start = 0
     y_start = 0
     
