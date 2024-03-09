@@ -26,9 +26,12 @@ def solve(n, row, col) :
     out_list = [_ for _ in range(1,n+1)]        #原始个数[1,n]
     out_list = list(map(str, out_list))         #转化为字符串类型
     
+    """
+    使用numpy创建数组时 由于'1' '2'等都被时为单字符串。当加入'10'时会被认为是'1'与'0'
+    将数据类型设置为对象即可解决这个问题
+    """
     #构建输出矩阵 m*n大小 初始元素为 "*"
-    out_mat = np.array([['*' for _ in range(col)] for _ in range(row)])
-    
+    out_mat = np.array([['*' for _ in range(col)] for _ in range(row)],dtype=object)
     
     #控制轮次的变量 即确定剩下的矩阵形状
     ct = 0
@@ -41,12 +44,10 @@ def solve(n, row, col) :
     
     #循环填充
     while True :
-        p = add(row, col, out_mat[ct:row+2*ct,ct:col+2*ct] , out_list, p)
+        p = add(row-2*ct, col-2*ct, out_mat[ct:row-ct,ct:col-ct] , out_list, p)
         if p == 1 :
             #一轮填充结束
             ct += 1
-            row -= 2*ct
-            col -= 2*ct
         else :
             break
 
@@ -60,8 +61,9 @@ def permission (out_list) :
     else :
         return 1
     
+    
 #填充函数    
-def add(row, col, mat, out_list, p):
+def add(row, col, mat, out_list:list[str], p):
     #首行填充
     for i in range(col) :
         mat[0][i] = out_list[0]
@@ -94,7 +96,9 @@ def add(row, col, mat, out_list, p):
         if p == 0 :         #填充完毕 立刻停止
             return p
     
-     
+    return 1
+
+
 #找到最小列数
 def find_col(n, row) :
     #col储存最小列
@@ -122,6 +126,7 @@ def main() :
     col = find_col(n, row)
     
     res = solve(n, row, col)
+    #print(res)
     for i,j in enumerate(res) :
         print(' '.join(j))
     
