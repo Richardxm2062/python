@@ -19,9 +19,6 @@
 """
 
 #输入个数,行数,列数
-from tkinter.tix import Tree
-
-
 def solve(n, row, col) :
     #构建待填充元素列表
     out_list = [_ for _ in range(1,n+1)]        #原始个数[1,n]
@@ -39,10 +36,12 @@ def solve(n, row, col) :
     #索引偏移量
     ct = 0
     
+    
+    
     #循环填充
     while True :
-        add(row, col, [ele[ct:col+ct] for ele in out_mat[ct:row+ct]], out_list, p)
-        if p != 0 :
+        p = add(row, col, , out_list, p)
+        if p == 1 :
             #一轮填充结束
             ct += 1
             row -= 2*ct
@@ -71,12 +70,11 @@ def add(row, col, mat, out_list, p):
         
     #中行升序填充
         for ele in mat[1:row] :
-            for j in range(col) :
-                ele[j] = out_list[0]
-                out_list.pop(0)
-                p = permission(out_list)
-                if p == 0 :         #填充完毕 立刻停止
-                    return p 
+            ele[-1] = out_list[0]
+            out_list.pop(0)
+            p = permission(out_list)
+            if p == 0 :         #填充完毕 立刻停止
+                return p 
                 
     #尾行倒序填充
     for i in range(col-1, -1, -1) :
@@ -85,11 +83,17 @@ def add(row, col, mat, out_list, p):
         p = permission(out_list)
         if p == 0 :         #填充完毕 立刻停止
             return p 
-    
-            
+        
+    #中行降序填充
+    for ele in mat[row-1:0:-1] :
+        ele[0] = out_list[0]
+        out_list.pop(0)
+        p = permission(out_list)
+        if p == 0 :         #填充完毕 立刻停止
+            return p
 
-   
     
+     
 #找到最小列数
 def find_col(n, row) :
     #col储存最小列
