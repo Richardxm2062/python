@@ -17,6 +17,8 @@
 竖向填充时 纵坐标不变 行坐标-1  [-1,0]
 得到控制方向的 列表 [0,1,0,-1,0] (这个是难点)
 """
+import numpy as np
+
 
 #输入个数,行数,列数
 def solve(n, row, col) :
@@ -25,7 +27,8 @@ def solve(n, row, col) :
     out_list = list(map(str, out_list))         #转化为字符串类型
     
     #构建输出矩阵 m*n大小 初始元素为 "*"
-    out_mat = [['*' for _ in range(col)] for _ in range(row)]
+    out_mat = np.array([['*' for _ in range(col)] for _ in range(row)])
+    
     
     #控制轮次的变量 即确定剩下的矩阵形状
     ct = 0
@@ -36,11 +39,9 @@ def solve(n, row, col) :
     #索引偏移量
     ct = 0
     
-    
-    
     #循环填充
     while True :
-        p = add(row, col, , out_list, p)
+        p = add(row, col, out_mat[ct:row+2*ct,ct:col+2*ct] , out_list, p)
         if p == 1 :
             #一轮填充结束
             ct += 1
@@ -50,6 +51,7 @@ def solve(n, row, col) :
             break
 
     return out_mat
+    
     
 def permission (out_list) :
     if out_list == [] :
@@ -69,13 +71,13 @@ def add(row, col, mat, out_list, p):
             return p 
         
     #中行升序填充
-        for ele in mat[1:row] :
-            ele[-1] = out_list[0]
-            out_list.pop(0)
-            p = permission(out_list)
-            if p == 0 :         #填充完毕 立刻停止
-                return p 
-                
+    for ele in mat[1:row-1] :
+        ele[-1] = out_list[0]
+        out_list.pop(0)
+        p = permission(out_list)
+        if p == 0 :         #填充完毕 立刻停止
+            return p 
+            
     #尾行倒序填充
     for i in range(col-1, -1, -1) :
         mat[-1][i] = out_list[0]
@@ -85,13 +87,12 @@ def add(row, col, mat, out_list, p):
             return p 
         
     #中行降序填充
-    for ele in mat[row-1:0:-1] :
+    for ele in mat[row-2:0:-1] :
         ele[0] = out_list[0]
         out_list.pop(0)
         p = permission(out_list)
         if p == 0 :         #填充完毕 立刻停止
             return p
-
     
      
 #找到最小列数
