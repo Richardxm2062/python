@@ -25,25 +25,3 @@ def creat_node() :
     n3.left = n6; n3.right = n7
 
     return n1,n2,n3,n4,n5,n6,n7                         #必须返回
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
