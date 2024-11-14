@@ -5,7 +5,7 @@ from matplotlib.patches import FancyArrowPatch
 
 # Constants for projectile motion
 g = 10  # Acceleration due to gravity (m/s^2)
-v0 = 300  # Initial horizontal velocity (m/s)
+v0 = 400  # Initial horizontal velocity (m/s)
 y0 = 0  # Initial height of the bullet (meters)
 h = 18 # height
 t_max = np.sqrt(2 * h / g)  # Estimated max time for the projectile to hit the ground
