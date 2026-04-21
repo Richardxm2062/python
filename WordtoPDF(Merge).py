@@ -2,35 +2,63 @@ import os
 import re
 import subprocess
 from docx import Document
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from pypdf import PdfReader, PdfWriter
 
-# LibreOffice 路径（固定）
 SOFFICE = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
 
 
-# ====== 工具函数 ======
+# ====== 工具 ======
 
-def clean_input_path(path):
-    """去掉 mac 复制路径两侧的单引号"""
-    path = path.strip()
-    if path.startswith("'") and path.endswith("'"):
-        path = path[1:-1]
-    return path
+def parse_input_paths(s):
+    paths = re.findall(r"'([^']+)'", s)
+    if not paths:
+        paths = [line.strip() for line in s.splitlines() if line.strip()]
+    return paths
 
 
 def natural_key(s):
-    """按数字排序"""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split(r'(\d+)', s)]
 
 
-# ====== 第一步：docx → 删除页眉 → 转 PDF ======
+# ====== docx处理（核心升级） ======
 
-def remove_headers(doc_path):
+def process_docx_format(doc_path):
     doc = Document(doc_path)
+
     for section in doc.sections:
+        # ===== 删除页眉 =====
         for p in section.header.paragraphs:
             p.text = ""
+
+        # ===== 清空页脚 =====
+        footer = section.footer
+        for p in footer.paragraphs:
+            p.text = ""
+
+        # ===== 插入页码（居中） =====
+        p = footer.paragraphs[0]
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+        run = p.add_run()
+
+        fldChar1 = OxmlElement('w:fldChar')
+        fldChar1.set(qn('w:fldCharType'), 'begin')
+
+        instrText = OxmlElement('w:instrText')
+        instrText.set(qn('xml:space'), 'preserve')
+        instrText.text = "PAGE"
+
+        fldChar2 = OxmlElement('w:fldChar')
+        fldChar2.set(qn('w:fldCharType'), 'end')
+
+        run._r.append(fldChar1)
+        run._r.append(instrText)
+        run._r.append(fldChar2)
+
     doc.save(doc_path)
 
 
@@ -49,39 +77,34 @@ def process_docx(root_dir):
         for file in files:
             if file.startswith("~$"):
                 continue
-
             if file.endswith(".docx"):
                 file_path = os.path.join(root, file)
-                print(f"[转换] {file_path}")
+                print(f"[处理docx] {file_path}")
 
                 try:
-                    remove_headers(file_path)
+                    process_docx_format(file_path)
                     convert_to_pdf(file_path)
                 except Exception as e:
-                    print(f"❌ docx处理失败: {file_path}")
+                    print(f"❌ docx失败: {file_path}")
                     print(e)
 
 
-# ====== 第二步：分类 PDF ======
+# ====== PDF分类 ======
 
 def collect_pdfs(root_dir):
-    A = []  # 解析
-    B = []  # 原卷
-
+    A, B = [], []
     for root, dirs, files in os.walk(root_dir):
         for file in files:
             if file.endswith(".pdf"):
                 full_path = os.path.join(root, file)
-
                 if "解析" in file:
                     A.append(full_path)
                 elif "原卷" in file:
                     B.append(full_path)
-
     return A, B
 
 
-# ====== 第三步：合并 PDF ======
+# ====== PDF合并 ======
 
 def merge_pdfs(file_list, output_path):
     writer = PdfWriter()
@@ -96,21 +119,21 @@ def merge_pdfs(file_list, output_path):
         writer.write(f)
 
 
-# ====== 主流程 ======
+# ====== 单路径流程 ======
 
-def main():
-    # 1️⃣ 输入路径
-    input_path = input("请输入文件夹路径：\n")
-    root_dir = clean_input_path(input_path)
-
+def process_one(root_dir):
     if not os.path.exists(root_dir):
-        print("❌ 路径不存在")
+        print(f"❌ 路径不存在: {root_dir}")
         return
 
-    print("\n====== 第一步：docx → PDF ======")
+    print(f"\n==============================")
+    print(f"处理路径: {root_dir}")
+    print(f"==============================")
+
+    # 1️⃣ docx处理
     process_docx(root_dir)
 
-    print("\n====== 第二步：收集 PDF ======")
+    # 2️⃣ 收集PDF
     A, B = collect_pdfs(root_dir)
 
     A.sort(key=lambda x: natural_key(os.path.basename(x)))
@@ -119,17 +142,29 @@ def main():
     print(f"解析数量: {len(A)}")
     print(f"原卷数量: {len(B)}")
 
-    print("\n====== 第三步：合并 ======")
-
+    # 3️⃣ 合并
     if A:
-        output_A = os.path.join(root_dir, "(解析).pdf")
-        merge_pdfs(A, output_A)
-
+        merge_pdfs(A, os.path.join(root_dir, "(解析).pdf"))
     if B:
-        output_B = os.path.join(root_dir, "(原卷).pdf")
-        merge_pdfs(B, output_B)
+        merge_pdfs(B, os.path.join(root_dir, "(原卷).pdf"))
 
-    print("\n✅ 全部完成")
+    print("✅ 完成")
+
+
+# ====== 主入口 ======
+
+def main():
+    print("请输入一个或多个路径（支持复制多个）：")
+    user_input = input()
+
+    paths = parse_input_paths(user_input)
+
+    if not paths:
+        print("❌ 未识别到路径")
+        return
+
+    for p in paths:
+        process_one(p)
 
 
 if __name__ == "__main__":
