@@ -24,22 +24,28 @@ def natural_key(s):
             for text in re.split(r'(\d+)', s)]
 
 
-# ====== docx处理（核心升级） ======
+def find_common_root(file_list):
+    if not file_list:
+        return None
+    return os.path.commonpath(file_list)
+
+
+# ====== docx处理（保留页眉页脚逻辑） ======
 
 def process_docx_format(doc_path):
     doc = Document(doc_path)
 
     for section in doc.sections:
-        # ===== 删除页眉 =====
+        # 删除页眉
         for p in section.header.paragraphs:
             p.text = ""
 
-        # ===== 清空页脚 =====
+        # 清空页脚
         footer = section.footer
         for p in footer.paragraphs:
             p.text = ""
 
-        # ===== 插入页码（居中） =====
+        # 添加页码
         p = footer.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
@@ -73,7 +79,7 @@ def convert_to_pdf(doc_path):
 
 
 def process_docx(root_dir):
-    for root, dirs, files in os.walk(root_dir):
+    for root, _, files in os.walk(root_dir):
         for file in files:
             if file.startswith("~$"):
                 continue
@@ -93,27 +99,46 @@ def process_docx(root_dir):
 
 def collect_pdfs(root_dir):
     A, B = [], []
-    for root, dirs, files in os.walk(root_dir):
+    for root, _, files in os.walk(root_dir):
         for file in files:
             if file.endswith(".pdf"):
                 full_path = os.path.join(root, file)
+
                 if "解析" in file:
                     A.append(full_path)
                 elif "原卷" in file:
                     B.append(full_path)
+
     return A, B
 
 
-# ====== PDF合并 ======
+# ====== PDF合并（带书签） ======
 
 def merge_pdfs(file_list, output_path):
     writer = PdfWriter()
+    current_page = 0
 
     for f in file_list:
-        print(f"[合并] {os.path.basename(f)}")
-        reader = PdfReader(f)
+        name = os.path.basename(f)
+        print(f"[合并] {name}")
+
+        try:
+            reader = PdfReader(f)
+        except:
+            print(f"❌ 跳过损坏文件: {f}")
+            continue
+
+        num_pages = len(reader.pages)
+
+        title = name.replace(".pdf", "")
+        title = title.replace("（解析版）", "").replace("（原卷版）", "")
+
+        writer.add_outline_item(title, current_page)
+
         for page in reader.pages:
             writer.add_page(page)
+
+        current_page += num_pages
 
     with open(output_path, "wb") as f:
         writer.write(f)
@@ -126,14 +151,12 @@ def process_one(root_dir):
         print(f"❌ 路径不存在: {root_dir}")
         return
 
-    print(f"\n==============================")
+    print("\n==============================")
     print(f"处理路径: {root_dir}")
-    print(f"==============================")
+    print("==============================")
 
-    # 1️⃣ docx处理
     process_docx(root_dir)
 
-    # 2️⃣ 收集PDF
     A, B = collect_pdfs(root_dir)
 
     A.sort(key=lambda x: natural_key(os.path.basename(x)))
@@ -142,11 +165,14 @@ def process_one(root_dir):
     print(f"解析数量: {len(A)}")
     print(f"原卷数量: {len(B)}")
 
-    # 3️⃣ 合并
+    # ⭐ 修复输出路径
     if A:
-        merge_pdfs(A, os.path.join(root_dir, "(解析).pdf"))
+        out_dir_A = find_common_root(A)
+        merge_pdfs(A, os.path.join(out_dir_A, "(解析).pdf"))
+
     if B:
-        merge_pdfs(B, os.path.join(root_dir, "(原卷).pdf"))
+        out_dir_B = find_common_root(B)
+        merge_pdfs(B, os.path.join(out_dir_B, "(原卷).pdf"))
 
     print("✅ 完成")
 
@@ -154,7 +180,7 @@ def process_one(root_dir):
 # ====== 主入口 ======
 
 def main():
-    print("请输入一个或多个路径（支持复制多个）：")
+    print("请输入一个或多个路径：")
     user_input = input()
 
     paths = parse_input_paths(user_input)
