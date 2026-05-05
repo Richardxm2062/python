@@ -22,10 +22,8 @@ def parse_input_paths():
 
     text = "\n".join(lines)
 
-    # 优先匹配 '路径'
     paths = re.findall(r"'([^']+)'", text)
 
-    # 如果没有引号 → 按行读取
     if not paths:
         paths = [line.strip() for line in lines if line.strip()]
 
@@ -57,16 +55,36 @@ def collect_pdfs(root_dir):
     return A, B
 
 
-# ====== 合并 ======
+# ====== ⭐ 合并（带书签） ======
 
 def merge_pdfs(file_list, output_path):
     writer = PdfWriter()
+    current_page = 0
 
     for f in file_list:
-        print(f"[合并] {os.path.basename(f)}")
-        reader = PdfReader(f)
+        name = os.path.basename(f)
+        print(f"[合并] {name}")
+
+        try:
+            reader = PdfReader(f)
+        except:
+            print(f"❌ 跳过损坏文件: {f}")
+            continue
+
+        num_pages = len(reader.pages)
+
+        # ⭐ 书签标题（清理后缀）
+        title = name.replace(".pdf", "")
+        title = title.replace("（解析版）", "").replace("（原卷版）", "")
+
+        # ⭐ 添加书签
+        writer.add_outline_item(title, current_page)
+
+        # ⭐ 添加页面
         for page in reader.pages:
             writer.add_page(page)
+
+        current_page += num_pages
 
     with open(output_path, "wb") as f:
         writer.write(f)
