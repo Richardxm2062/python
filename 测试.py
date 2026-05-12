@@ -13,9 +13,16 @@ SOFFICE = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
 # ====== 工具 ======
 
 def parse_input_paths(s):
-    paths = re.findall(r"'([^']+)'", s)
+    # 按单引号分割
+    parts = s.split("'")
+
+    # 取奇数位（真正路径）
+    paths = [p.strip() for i, p in enumerate(parts) if i % 2 == 1]
+
+    # 如果没有引号 → 按行解析
     if not paths:
         paths = [line.strip() for line in s.splitlines() if line.strip()]
+
     return paths
 
 
@@ -36,7 +43,7 @@ def find_common_root(file_list):
     return common
 
 
-# ====== ⭐ 提取章节名 & 类型名 ======
+# ====== 提取章节名 & 类型名 ======
 
 def extract_names(root_dir):
     parent = os.path.basename(os.path.dirname(root_dir))
@@ -94,7 +101,11 @@ def convert_to_pdf(doc_path):
 
 
 def process_docx(root_dir):
-    for root, _, files in os.walk(root_dir):
+    for root, dirs, files in os.walk(root_dir):
+
+        # ⭐ 跳过 word 目录（关键）
+        if os.path.basename(root) == "word":
+            continue
 
         word_files = []
 
@@ -135,15 +146,26 @@ def process_docx(root_dir):
 def collect_pdfs(root_dir):
     A, B = [], []
 
-    for root, _, files in os.walk(root_dir):
-        for file in files:
-            if file.endswith(".pdf"):
-                full_path = os.path.join(root, file)
+    for root, dirs, files in os.walk(root_dir):
 
-                if "解析" in file:
-                    A.append(full_path)
-                elif "原卷" in file:
-                    B.append(full_path)
+        # ⭐ 跳过 word 目录
+        if os.path.basename(root) == "word":
+            continue
+
+        for file in files:
+            if not file.endswith(".pdf"):
+                continue
+
+            # ⭐ 跳过已经合并过的PDF
+            if file.startswith("(") or "）(" in file:
+                continue
+
+            full_path = os.path.join(root, file)
+
+            if "解析" in file:
+                A.append(full_path)
+            elif "原卷" in file:
+                B.append(full_path)
 
     return A, B
 
@@ -216,7 +238,23 @@ def process_one(root_dir):
     print("✅ 完成")
 
 
-# ====== ⭐ 主入口（关键升级） ======
+# ====== ⭐ 判断是否是任务目录（修复版） ======
+
+def has_target_files(dir_path):
+    for f in os.listdir(dir_path):
+        full_path = os.path.join(dir_path, f)
+
+        # ⭐ 必须是文件（关键修复）
+        if not os.path.isfile(full_path):
+            continue
+
+        if f.endswith(".docx") or f.endswith(".pdf"):
+            return True
+
+    return False
+
+
+# ====== 主入口 ======
 
 def main():
     print("请输入一个或多个路径：")
@@ -233,19 +271,23 @@ def main():
             print(f"❌ 路径不存在: {p}")
             continue
 
-        # ⭐ 如果有子目录 → 按子目录处理
-        subdirs = [
-            os.path.join(p, d)
-            for d in os.listdir(p)
-            if os.path.isdir(os.path.join(p, d))
-        ]
+        # ⭐ 如果是“章节目录”（名字像 运动学）
+        # 才拆子目录
+        if re.search(r'\d+\s*\S+', os.path.basename(p)) is None:
+            subdirs = [
+                os.path.join(p, d)
+                for d in os.listdir(p)
+                if os.path.isdir(os.path.join(p, d))
+            ]
 
-        if subdirs:
-            print(f"\n检测到子目录，按子目录处理: {p}")
-            for sub in subdirs:
-                process_one(sub)
-        else:
-            process_one(p)
+            if subdirs:
+                print(f"\n检测到子目录，按子目录处理: {p}")
+                for sub in subdirs:
+                    process_one(sub)
+                continue
+
+        # ⭐ 默认：直接处理
+        process_one(p)
 
 
 if __name__ == "__main__":
