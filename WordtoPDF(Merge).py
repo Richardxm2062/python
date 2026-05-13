@@ -27,20 +27,10 @@ def parse_input_paths(s):
 
 
 def natural_key(s):
-    return [int(text) if text.isdigit() else text.lower()
-            for text in re.split(r'(\d+)', s)]
-
-
-def find_common_root(file_list):
-    if not file_list:
-        return None
-
-    common = os.path.commonpath(file_list)
-
-    if os.path.isfile(common):
-        return os.path.dirname(common)
-
-    return common
+    return [
+        int(text) if text.isdigit() else text.lower()
+        for text in re.split(r'(\d+)', s)
+    ]
 
 
 # ====== 提取章节名 & 类型名 ======
@@ -61,13 +51,17 @@ def process_docx_format(doc_path):
     doc = Document(doc_path)
 
     for section in doc.sections:
+
+        # 删除页眉
         for p in section.header.paragraphs:
             p.text = ""
 
+        # 清空页脚
         footer = section.footer
         for p in footer.paragraphs:
             p.text = ""
 
+        # 添加页码
         p = footer.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
@@ -97,41 +91,54 @@ def convert_to_pdf(doc_path):
         "--convert-to", "pdf",
         doc_path,
         "--outdir", os.path.dirname(doc_path)
-    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    ],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL)
 
 
 def process_docx(root_dir):
+
     for root, dirs, files in os.walk(root_dir):
 
-        # ⭐ 跳过 word 目录（关键）
+        # 跳过 word 目录
         if os.path.basename(root) == "word":
             continue
 
         word_files = []
 
         for file in files:
+
             if file.startswith("~$"):
                 continue
 
-            if file.endswith(".docx"):
-                file_path = os.path.join(root, file)
-                print(f"[处理docx] {file_path}")
+            if not file.endswith(".docx"):
+                continue
 
-                try:
-                    process_docx_format(file_path)
-                    convert_to_pdf(file_path)
-                    word_files.append(file_path)
-                except Exception as e:
-                    print(f"❌ docx失败: {file_path}")
-                    print(e)
+            file_path = os.path.join(root, file)
+
+            print(f"[处理docx] {file_path}")
+
+            try:
+                process_docx_format(file_path)
+                convert_to_pdf(file_path)
+
+                word_files.append(file_path)
+
+            except Exception as e:
+                print(f"❌ docx失败: {file_path}")
+                print(e)
+
+        # ====== 移动word文件 ======
 
         if word_files:
+
             word_dir = os.path.join(root, "word")
 
             if not os.path.exists(word_dir):
                 os.makedirs(word_dir)
 
             for file_path in word_files:
+
                 filename = os.path.basename(file_path)
                 target_path = os.path.join(word_dir, filename)
 
@@ -144,19 +151,22 @@ def process_docx(root_dir):
 # ====== PDF分类 ======
 
 def collect_pdfs(root_dir):
-    A, B = [], []
+
+    A = []
+    B = []
 
     for root, dirs, files in os.walk(root_dir):
 
-        # ⭐ 跳过 word 目录
+        # 跳过 word 目录
         if os.path.basename(root) == "word":
             continue
 
         for file in files:
+
             if not file.endswith(".pdf"):
                 continue
 
-            # ⭐ 跳过已经合并过的PDF
+            # 跳过已经合并过的PDF
             if file.startswith("(") or "）(" in file:
                 continue
 
@@ -164,6 +174,7 @@ def collect_pdfs(root_dir):
 
             if "解析" in file:
                 A.append(full_path)
+
             elif "原卷" in file:
                 B.append(full_path)
 
@@ -173,25 +184,34 @@ def collect_pdfs(root_dir):
 # ====== PDF合并 ======
 
 def merge_pdfs(file_list, output_path):
+
     writer = PdfWriter()
     current_page = 0
 
     for f in file_list:
+
         name = os.path.basename(f)
+
         print(f"[合并] {name}")
 
         try:
             reader = PdfReader(f)
+
         except:
             print(f"❌ 跳过损坏文件: {f}")
             continue
 
         num_pages = len(reader.pages)
 
+        # ===== 书签标题 =====
+
         title = name.replace(".pdf", "")
-        title = title.replace("（解析版）", "").replace("（原卷版）", "")
+        title = title.replace("（解析版）", "")
+        title = title.replace("（原卷版）", "")
 
         writer.add_outline_item(title, current_page)
+
+        # ===== 添加页面 =====
 
         for page in reader.pages:
             writer.add_page(page)
@@ -205,6 +225,7 @@ def merge_pdfs(file_list, output_path):
 # ====== 主流程 ======
 
 def process_one(root_dir):
+
     if not os.path.exists(root_dir):
         print(f"❌ 路径不存在: {root_dir}")
         return
@@ -213,7 +234,11 @@ def process_one(root_dir):
     print(f"处理路径: {root_dir}")
     print("==============================")
 
+    # ===== docx转pdf =====
+
     process_docx(root_dir)
+
+    # ===== 收集pdf =====
 
     A, B = collect_pdfs(root_dir)
 
@@ -223,41 +248,40 @@ def process_one(root_dir):
     print(f"解析数量: {len(A)}")
     print(f"原卷数量: {len(B)}")
 
+    # ===== 文件命名 =====
+
     parent_name, current_name = extract_names(root_dir)
 
+    # ===== 合并 =====
+
+    # ⭐ 核心修复：
+    # 输出目录直接使用 root_dir
+    # 而不是 commonpath
+
     if A:
-        out_dir_A = find_common_root(A)
+
         filename_A = f"{parent_name}({current_name})(解析).pdf"
-        merge_pdfs(A, os.path.join(out_dir_A, filename_A))
+
+        output_A = os.path.join(root_dir, filename_A)
+
+        merge_pdfs(A, output_A)
 
     if B:
-        out_dir_B = find_common_root(B)
+
         filename_B = f"{parent_name}({current_name})(原卷).pdf"
-        merge_pdfs(B, os.path.join(out_dir_B, filename_B))
+
+        output_B = os.path.join(root_dir, filename_B)
+
+        merge_pdfs(B, output_B)
 
     print("✅ 完成")
 
 
-# ====== ⭐ 判断是否是任务目录（修复版） ======
-
-def has_target_files(dir_path):
-    for f in os.listdir(dir_path):
-        full_path = os.path.join(dir_path, f)
-
-        # ⭐ 必须是文件（关键修复）
-        if not os.path.isfile(full_path):
-            continue
-
-        if f.endswith(".docx") or f.endswith(".pdf"):
-            return True
-
-    return False
-
-
 # ====== 主入口 ======
-
 def main():
+
     print("请输入一个或多个路径：")
+
     user_input = input()
 
     paths = parse_input_paths(user_input)
@@ -267,19 +291,42 @@ def main():
         return
 
     for p in paths:
+
         if not os.path.exists(p):
             print(f"❌ 路径不存在: {p}")
             continue
 
-        # ⭐ 强制只按一级子目录处理
+        # ⭐ 直接处理输入目录
+        process_one(p)
+
+    print("请输入一个或多个路径：")
+
+    user_input = input()
+
+    paths = parse_input_paths(user_input)
+
+    if not paths:
+        print("❌ 未识别到路径")
+        return
+
+    for p in paths:
+
+        if not os.path.exists(p):
+            print(f"❌ 路径不存在: {p}")
+            continue
+
+        # ===== 强制按一级子目录处理 =====
+
         subdirs = [
             os.path.join(p, d)
             for d in os.listdir(p)
             if os.path.isdir(os.path.join(p, d))
         ]
 
+        # 如果没有子目录
+        # 说明本身就是任务目录
+
         if not subdirs:
-            # 👉 如果本身就是任务目录（比如你直接传“分层作业”）
             process_one(p)
             continue
 
