@@ -1,7 +1,139 @@
+# =========================================================
+# 功能说明
+# =========================================================
+#
+# 本程序用于：
+#
+# 1. 批量扫描指定目录及其所有子目录
+#
+# 2. 查找其中的 docx 文件
+#
+# 3. 对每个 docx：
+#
+#    (A) 优先检查是否已经存在同名 PDF
+#
+#        例如：
+#
+#        xxx.docx
+#        xxx.pdf
+#
+#        如果已存在：
+#
+#        → 直接使用该 PDF
+#        → 不再调用 LibreOffice 转换
+#
+#        适用于：
+#
+#        - LibreOffice 无法转换的特殊文件
+#        - 手工导出的 PDF
+#        - 已经处理过的文件
+#
+#
+#    (B) 如果不存在同名 PDF
+#
+#        第一阶段：
+#
+#        docx
+#        ↓
+#        删除页眉页脚
+#        ↓
+#        导出 (无页码).pdf
+#
+#
+#        第二阶段：
+#
+#        docx
+#        ↓
+#        插入 Word 页码
+#        ↓
+#        导出正式 pdf
+#
+#
+# 4. 所有处理完成后的 docx
+#
+#    自动移动到：
+#
+#    word/
+#
+#    文件夹中保存
+#
+#
+# 5. 收集 PDF
+#
+#    优先级：
+#
+#    (无页码).pdf
+#          >
+#    普通 pdf
+#
+#    同名文件只保留一个
+#
+#
+# 6. 自动分类：
+#
+#    解析版
+#    原卷版
+#
+#
+# 7. 分别合并：
+#
+#    xxx(解析).pdf
+#    xxx(原卷).pdf
+#
+#
+# 8. 合并时自动生成：
+#
+#    - PDF书签
+#    - 连续页码
+#
+#
+# 9. 合并完成后：
+#
+#    自动删除：
+#
+#    xxx(无页码).pdf
+#
+#    仅保留：
+#
+#    - 正式 PDF
+#    - 合并 PDF
+#
+#
+# =========================================================
+# 输入建议
+# =========================================================
+#
+# 推荐输入：
+#
+# '/路径/分层作业'
+# '/路径/重难点训练'
+#
+# '/路径/综合测试'
+#
+# 可同时输入多个目录。
+#
+#
+# =========================================================
+# 特殊情况
+# =========================================================
+#
+# 如果某些 Word 无法被 LibreOffice 转换：
+#
+# 手工导出：
+#
+# xxx.pdf
+#
+# 放在与 docx 同目录即可。
+#
+# 下次运行时程序会直接使用该 PDF，
+# 不再尝试转换 Word。
+#
+# =========================================================
 import os
 import re
 import subprocess
 import fitz
+import time
 
 from docx import Document
 from docx.oxml import OxmlElement
@@ -148,6 +280,24 @@ def process_docx_format(doc_path):
 
     convert_to_pdf(temp_docx)
 
+    temp_pdf = temp_docx.replace(".docx", ".pdf")
+
+    wait_ok = False
+
+    for _ in range(20):
+
+        if os.path.exists(temp_pdf):
+            wait_ok = True
+            break
+
+        time.sleep(0.5)
+
+    if not wait_ok:
+
+        raise Exception(
+            f"无页码PDF生成失败: {os.path.basename(temp_pdf)}"
+        )
+
     os.remove(temp_docx)
 
     # =====================================================
@@ -173,9 +323,7 @@ def convert_to_pdf(doc_path):
         "--convert-to", "pdf",
         doc_path,
         "--outdir", os.path.dirname(doc_path)
-    ],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL)
+    ])
 
 
 def process_docx(root_dir):
@@ -204,7 +352,25 @@ def process_docx(root_dir):
 
             file_path = os.path.join(root, file)
 
-            print(f"[处理docx] {file_path}")
+            pdf_path = file_path.replace(".docx", ".pdf")
+
+            # =================================================
+            # 如果已有同名PDF
+            # 直接使用
+            # =================================================
+
+            if os.path.exists(pdf_path):
+
+                print(
+                    f"[使用已有PDF] "
+                    f"{os.path.basename(pdf_path)}"
+                )
+
+                word_files.append(file_path)
+
+                continue
+
+            print(f"[处理docx] {file_path}")            
 
             try:
 
@@ -249,8 +415,8 @@ def process_docx(root_dir):
 
 def collect_pdfs(root_dir):
 
-    A = []
-    B = []
+    A = {}
+    B = {}
 
     for root, dirs, files in os.walk(root_dir):
 
@@ -262,24 +428,31 @@ def collect_pdfs(root_dir):
             if not file.endswith(".pdf"):
                 continue
 
-            # =================================================
-            # 只收集无页码pdf
-            # =================================================
-
-            if "(无页码)" not in file:
-                continue
-
             full_path = os.path.join(root, file)
+
+            key = file.replace("(无页码)", "")
 
             if "解析" in file:
 
-                A.append(full_path)
+                if "(无页码)" in file:
+
+                    A[key] = full_path
+
+                elif key not in A:
+
+                    A[key] = full_path
 
             elif "原卷" in file:
 
-                B.append(full_path)
+                if "(无页码)" in file:
 
-    return A, B
+                    B[key] = full_path
+
+                elif key not in B:
+
+                    B[key] = full_path
+
+    return list(A.values()), list(B.values())
 
 
 # =========================================================
@@ -328,11 +501,19 @@ def delete_temp_pdfs(file_list):
 
     for f in file_list:
 
+        # 只删除临时无页码pdf
+
+        if "(无页码)" not in f:
+            continue
+
         try:
 
             os.remove(f)
 
-            print(f"[删除临时pdf] {os.path.basename(f)}")
+            print(
+                f"[删除临时pdf] "
+                f"{os.path.basename(f)}"
+            )
 
         except:
 
